@@ -1,3 +1,5 @@
+#include <type_traits>
+
 using namespace std;
 
 namespace smart_ptr {
@@ -52,13 +54,13 @@ namespace smart_ptr {
         }
 
     public:
-        constexpr linked_ptr() noexcept {}
+        constexpr linked_ptr() noexcept = default;
 
         template<
                 typename _Type,
-                typename = typename enable_if<
-                        is_convertible<_Type *, Type *>::value
-                >::type
+                typename = enable_if_t<
+                        is_convertible_v<_Type *, Type *>
+                >
         >
         linked_ptr(_Type *ptr) {
             _ptr = ptr;
@@ -66,9 +68,9 @@ namespace smart_ptr {
 
         template<
                 typename _Type,
-                typename = typename enable_if<
-                        is_convertible<_Type *, Type *>::value
-                >::type
+                typename = enable_if_t<
+                        is_convertible_v<_Type *, Type *>
+                >
         >
         linked_ptr(linked_ptr<_Type> &l_ptr) noexcept {
             copy(l_ptr);

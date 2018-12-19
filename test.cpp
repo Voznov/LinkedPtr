@@ -6,91 +6,7 @@
 
 using namespace std;
 using namespace smart_ptr;
-struct Cnt
-{
-public:
-    Cnt(char const * name)
-        : name_(name)
-    {
-        add_this();
-    }
 
-    virtual ~Cnt()
-    {
-        remove_this();
-    }
-
-    Cnt const * get_this() const
-    {
-        return this;
-    }
-
-    std::string get_name() const
-    {
-        return name_;
-    }
-
-private:
-    typedef std::map<std::string, Cnt *> objects_map_t;
-
-    static objects_map_t & objects()
-    {
-        static objects_map_t objects;
-        return objects;
-    }
-
-    void add_this()
-    {
-        objects_map_t & objs = objects();
-
-        assert(objs.find(name_) == objs.end());
-
-        objs.insert(std::make_pair(name_, this));
-    }
-
-    void remove_this()
-    {
-        objects_map_t & objs = objects();
-
-        auto it = objs.find(name_);
-
-        assert(it != objs.end());
-        assert(it->second == this);
-
-        objs.erase(it);
-    }
-
-public:
-    static void verify_state(
-        std::initializer_list<char const *> should_be_objects)
-    {
-        // Get copy of objects map
-        objects_map_t stored_objs = objects();
-        for (char const * name: should_be_objects)
-        {
-            auto it = stored_objs.find(name);
-            assert(it != stored_objs.end());
-            stored_objs.erase(it);
-        }
-
-        assert(stored_objs.empty());
-    }
-
-private:
-    std::string name_;
-};
-
-struct CntD : Cnt
-{
-    CntD(char const * name)
-        : Cnt(name)
-    {
-        (void)fill_;
-    }
-
-private:
-    int fill_;
-};
 
 struct A
 {
@@ -193,6 +109,9 @@ int main()
 
     b.swap(b2);
     assert(b.unique());
+
+    cerr << "-----" << endl;
+    cerr << is_convertible_v<int *, int *> << endl;
 
 	return 0;
 }
