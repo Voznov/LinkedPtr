@@ -64,7 +64,7 @@ namespace smart_ptr {
                         is_convertible_v<_Type *, Type *>
                 >
         >
-        linked_ptr(_Type *ptr) {
+        explicit linked_ptr(_Type *ptr) {
             _ptr = ptr;
         }
 
@@ -133,6 +133,17 @@ namespace smart_ptr {
         template<typename _Type>
         inline bool operator>=(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr >= l_ptr._ptr);
+        }
+
+        template<
+                typename _Type,
+                typename = typename enable_if<
+                        is_convertible<_Type *, Type *>::value
+                >::type
+        >
+        linked_ptr<Type>& operator=(linked_ptr<_Type> &l_ptr) noexcept {
+            copy(l_ptr);
+            return *this;
         }
 
         template<
