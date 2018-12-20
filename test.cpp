@@ -38,6 +38,8 @@ public:
 	}
 };
 
+struct SSS;
+
 template <typename _Type, typename = typename enable_if<is_convertible<_Type *, A *>::value>::type>
 void check(_Type *)
 {
@@ -90,7 +92,7 @@ int main()
     assert(b.unique());
 
     cerr << "-----" << endl;
-    cerr << is_convertible_v<int *, int *> << endl;
+	shared_ptr<SSS> p1(reinterpret_cast<SSS *>(123));
 
 	return 0;
 }

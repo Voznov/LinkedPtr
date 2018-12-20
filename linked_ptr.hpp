@@ -1,5 +1,8 @@
 #include <type_traits>
 
+#ifndef _SMART_PTR_LINKED_PTR_HPP
+#define _SMART_PTR_LINKED_PTR_HPP
+
 namespace smart_ptr {
 
     using namespace std;
@@ -56,6 +59,8 @@ namespace smart_ptr {
         }
 
     public:
+        constexpr linked_ptr(nullptr_t) : linked_ptr() {}
+
         constexpr linked_ptr() noexcept {}
 
         template<
@@ -65,6 +70,7 @@ namespace smart_ptr {
                 >
         >
         explicit linked_ptr(_Type *ptr) {
+            static_assert( sizeof(_Type) > 0, "incomplete type" );
             _ptr = ptr;
         }
 
@@ -137,9 +143,9 @@ namespace smart_ptr {
 
         template<
                 typename _Type,
-                typename = typename enable_if<
-                        is_convertible<_Type *, Type *>::value
-                >::type
+                typename = enable_if_t<
+                        is_convertible_v<_Type *, Type *>
+                >
         >
         linked_ptr<Type>& operator=(linked_ptr<_Type> &l_ptr) noexcept {
             copy(l_ptr);
@@ -148,9 +154,9 @@ namespace smart_ptr {
 
         template<
                 typename _Type,
-                typename = typename enable_if<
-                        is_convertible<_Type *, Type *>::value
-                >::type
+                typename = enable_if_t<
+                        is_convertible_v<_Type *, Type *>
+                >
         >
         linked_ptr<Type>& operator=(const linked_ptr<_Type> &l_ptr) noexcept {
             copy(l_ptr);
@@ -170,3 +176,6 @@ namespace smart_ptr {
         }
     };
 }
+
+#endif //_SMART_PTR_LINKED_PTR_HPP
+
