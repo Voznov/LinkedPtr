@@ -1,8 +1,9 @@
 #include <type_traits>
 
-using namespace std;
-
 namespace smart_ptr {
+
+    using namespace std;
+
     namespace details {
         class Connector {
         public:
@@ -14,11 +15,10 @@ namespace smart_ptr {
         };
 
         template <typename Type>
-        inline void swap(Type * a, Type * b) {
-            Type tmp;
-            tmp = *a;
-            *a = *b;
-            *b = tmp;
+        inline void swap(Type & a, Type & b) {
+            Type tmp = a;
+            a = b;
+            b = tmp;
         }
     }
     template<typename Type>
@@ -28,17 +28,17 @@ namespace smart_ptr {
         class linked_ptr;
 
     private:
-        details::Connector _left;
-        details::Connector _right;
+        details::Connector * _left = new details::Connector;
+        details::Connector * _right = new details::Connector;
         Type *_ptr = nullptr;
 
         void clear() {
-            if (_ptr && !_left && !_right)
+            if (unique())
                 delete _ptr;
-            if (_left)
-                _left._conWith->_conWith = _right._conWith;
-            if (_right)
-                _right._conWith->_conWith = _left._conWith;
+            if (_left->_conWith)
+                _left->_conWith->_conWith = _right->_conWith;
+            if (_right->_conWith)
+                _right->_conWith->_conWith = _left->_conWith;
         }
 
         template<typename _Type>
@@ -48,13 +48,15 @@ namespace smart_ptr {
 
             _ptr = l_ptr._ptr;
 
-            _right._conWith = l_ptr._right._conWith;
-            _left._conWith = &l_ptr._right;
-            l_ptr._right._conWith = &_left;
+            _right->_conWith = l_ptr._right->_conWith;
+            if (_right->_conWith)
+                _right->_conWith->_conWith = _right;
+            _left->_conWith = l_ptr._right;
+            l_ptr._right->_conWith = _left;
         }
 
     public:
-        constexpr linked_ptr() noexcept = default;
+        constexpr linked_ptr() noexcept {}
 
         template<
                 typename _Type,
@@ -78,12 +80,14 @@ namespace smart_ptr {
 
         ~linked_ptr() {
             clear();
+            delete _left;
+            delete _right;
         }
 
         void reset(Type *ptr = nullptr) noexcept {
             clear();
             _ptr = ptr;
-            _left._conWith = _right._conWith = nullptr;
+            _left->_conWith = _right->_conWith = nullptr;
         }
 
         Type *get() const noexcept {
@@ -91,14 +95,14 @@ namespace smart_ptr {
         }
 
         void swap(linked_ptr<Type> &l_ptr) noexcept {
-            details::swap(&_ptr, &l_ptr._ptr);
+            details::swap(_ptr, l_ptr._ptr);
 
-            details::swap(&_left._conWith, &l_ptr._left._conWith);
-            details::swap(&_right._conWith, &l_ptr._right._conWith);
+            details::swap(_left, l_ptr._left);
+            details::swap(_right, l_ptr._right);
         }
 
         bool unique() const noexcept {
-            return (_ptr && !_left && !_right);
+            return (_ptr && !_left->_conWith && !_right->_conWith);
         }
 
         template<typename _Type>
@@ -129,6 +133,17 @@ namespace smart_ptr {
         template<typename _Type>
         inline bool operator>=(const linked_ptr<_Type> &l_ptr) noexcept {
             return (_ptr >= l_ptr._ptr);
+        }
+
+        template<
+                typename _Type,
+                typename = typename enable_if<
+                        is_convertible<_Type *, Type *>::value
+                >::type
+        >
+        linked_ptr<Type>& operator=(linked_ptr<_Type> &l_ptr) noexcept {
+            copy(l_ptr);
+            return *this;
         }
 
         Type &operator*() const noexcept {

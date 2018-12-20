@@ -32,14 +32,14 @@ public:
 struct C
 {
 public:
-	void set(int j)
+	void set(int)
 	{
 
 	}
 };
 
 template <typename _Type, typename = typename enable_if<is_convertible<_Type *, A *>::value>::type>
-void check(_Type * ptr)
+void check(_Type *)
 {
 	cerr << "kekT " << is_convertible<_Type *, _Type *>::value << endl;
 	cerr << "kekA " << is_convertible<_Type *, A *>::value << endl;
@@ -72,27 +72,6 @@ int main()
 	check(new A);
 	check(new B);
 //	check(new C);
-
-    cerr << "-----" << endl;
-
-    linked_ptr<Cnt> * cnDL = new linked_ptr<Cnt>(new CntD("cnDL"));
-    linked_ptr<Cnt> * cntL = new linked_ptr<Cnt>(*cnDL);
-    shared_ptr<Cnt> * cnDP = new shared_ptr<Cnt>(new CntD("cnDP"));
-    shared_ptr<Cnt> * cntP = new shared_ptr<Cnt>(*cnDP);
-
-    cerr << &**cntL << ' ' << &**cnDL << endl;
-    cerr << &**cntP << ' ' << &**cnDP << endl;
-
-    cntL->reset(new CntD("kek"));
-    cntP->reset(new CntD("lol"));
-
-    cerr << &**cntL << ' ' << &**cnDL << endl;
-    cerr << &**cntP << ' ' << &**cnDP << endl;
-
-    linked_ptr<CntD> cntd(new CntD("cntd"));
-//    linked_ptr<Cnt> cnt = cntd;
-    shared_ptr<CntD> cntd_(new CntD("cntd_"));
-    shared_ptr<Cnt> cnt_ = cntd_;
 
     cerr << "-----" << endl;
 
