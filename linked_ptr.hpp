@@ -49,6 +49,8 @@ namespace smart_ptr {
             if (_ptr == l_ptr._ptr)
                 return;
 
+            clear();
+
             _ptr = l_ptr._ptr;
 
             _right->_conWith = l_ptr._right->_conWith;
@@ -70,7 +72,7 @@ namespace smart_ptr {
                 >
         >
         explicit linked_ptr(_Type *ptr) {
-            static_assert( sizeof(_Type) > 0, "incomplete type" );
+            static_assert(sizeof(_Type) > 0, "incomplete type" );
             _ptr = ptr;
         }
 

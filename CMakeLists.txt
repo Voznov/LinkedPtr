@@ -18,6 +18,8 @@ add_executable(CCECDT2 comp_cmp_eq_const_diff_types2.cpp)
 add_executable(CCLC3 comp_cmp_less_const3.cpp)
 add_executable(CCNULL comp_ctor_NULL.cpp)
 add_executable(NIT1 ncomp_incomplete_type1.cpp)
+add_executable(RG021 run_gen_021_8x9_4113x4861_397x815_4x4_3x4_5x5_4x4_C4F2B4F7.cpp)
+add_executable(RG055 run_gen_055_15x26_28180541x35357669_1448194617849_DF45FC8F.cpp)
 
 #add_custom_target(TEST)
 #add_dependencies(TEST smoke smoke_gen RASDN RSA1 CADC)
