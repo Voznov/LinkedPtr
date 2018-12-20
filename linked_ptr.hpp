@@ -42,7 +42,7 @@ namespace smart_ptr {
         }
 
         template<typename _Type>
-        void copy(linked_ptr<_Type> &l_ptr) {
+        void copy(const linked_ptr<_Type> &l_ptr) {
             if (_ptr == l_ptr._ptr)
                 return;
 
@@ -106,32 +106,32 @@ namespace smart_ptr {
         }
 
         template<typename _Type>
-        inline bool operator==(const linked_ptr<_Type> &l_ptr) noexcept {
+        inline bool operator==(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr == l_ptr._ptr);
         }
 
         template<typename _Type>
-        inline bool operator!=(const linked_ptr<_Type> &l_ptr) noexcept {
+        inline bool operator!=(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr != l_ptr._ptr);
         }
 
         template<typename _Type>
-        inline bool operator<(const linked_ptr<_Type> &l_ptr) noexcept {
+        inline bool operator<(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr < l_ptr._ptr);
         }
 
         template<typename _Type>
-        inline bool operator>(const linked_ptr<_Type> &l_ptr) noexcept {
+        inline bool operator>(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr > l_ptr._ptr);
         }
 
         template<typename _Type>
-        inline bool operator<=(const linked_ptr<_Type> &l_ptr) noexcept {
+        inline bool operator<=(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr <= l_ptr._ptr);
         }
 
         template<typename _Type>
-        inline bool operator>=(const linked_ptr<_Type> &l_ptr) noexcept {
+        inline bool operator>=(const linked_ptr<_Type> &l_ptr) const noexcept {
             return (_ptr >= l_ptr._ptr);
         }
 
@@ -141,7 +141,7 @@ namespace smart_ptr {
                         is_convertible<_Type *, Type *>::value
                 >::type
         >
-        linked_ptr<Type>& operator=(linked_ptr<_Type> &l_ptr) noexcept {
+        linked_ptr<Type>& operator=(const linked_ptr<_Type> &l_ptr) noexcept {
             copy(l_ptr);
             return *this;
         }
