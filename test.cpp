@@ -87,12 +87,12 @@ int main()
 
     linked_ptr<int> b;
     linked_ptr<int> b2(new int);
+    linked_ptr<int> b3(b2);
 
-    b.swap(b2);
+    b2.swap(b3);
     assert(b.unique());
 
     cerr << "-----" << endl;
-	shared_ptr<SSS> p1(reinterpret_cast<SSS *>(123));
 
 	return 0;
 }

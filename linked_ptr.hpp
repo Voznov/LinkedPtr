@@ -1,28 +1,19 @@
 #include <type_traits>
+#include <utility>
 
 #ifndef _SMART_PTR_LINKED_PTR_HPP
 #define _SMART_PTR_LINKED_PTR_HPP
 
 namespace smart_ptr {
 
-    using namespace std;
-
     namespace details {
-        class Connector {
-        public:
+        struct Connector {
             Connector *_conWith = nullptr;
 
             inline explicit operator bool() const noexcept {
                 return _conWith != nullptr;
             }
         };
-
-        template <typename Type>
-        inline void swap(Type & a, Type & b) {
-            Type tmp = a;
-            a = b;
-            b = tmp;
-        }
     }
     template<typename Type>
     class linked_ptr {
@@ -36,8 +27,10 @@ namespace smart_ptr {
         Type *_ptr = nullptr;
 
         void clear() {
-            if (unique())
+            if (unique()) {
+                static_assert(sizeof(Type) > 0, "incomplete type" );
                 delete _ptr;
+            }
             if (_left->_conWith)
                 _left->_conWith->_conWith = _right->_conWith;
             if (_right->_conWith)
@@ -61,25 +54,24 @@ namespace smart_ptr {
         }
 
     public:
-        constexpr linked_ptr(nullptr_t) : linked_ptr() {}
+        constexpr linked_ptr(std::nullptr_t) : linked_ptr() {}
 
         constexpr linked_ptr() noexcept {}
 
         template<
                 typename _Type,
-                typename = enable_if_t<
-                        is_convertible_v<_Type *, Type *>
+                typename = std::enable_if_t<
+                        std::is_convertible_v<_Type *, Type *>
                 >
         >
         explicit linked_ptr(_Type *ptr) {
-            static_assert(sizeof(_Type) > 0, "incomplete type" );
             _ptr = ptr;
         }
 
         template<
                 typename _Type,
-                typename = enable_if_t<
-                        is_convertible_v<_Type *, Type *>
+                typename = std::enable_if_t<
+                        std::is_convertible_v<_Type *, Type *>
                 >
         >
         linked_ptr(linked_ptr<_Type> &l_ptr) noexcept {
@@ -103,10 +95,10 @@ namespace smart_ptr {
         }
 
         void swap(linked_ptr<Type> &l_ptr) noexcept {
-            details::swap(_ptr, l_ptr._ptr);
+            std::swap(_ptr, l_ptr._ptr);
 
-            details::swap(_left, l_ptr._left);
-            details::swap(_right, l_ptr._right);
+            std::swap(_left, l_ptr._left);
+            std::swap(_right, l_ptr._right);
         }
 
         bool unique() const noexcept {
@@ -145,8 +137,8 @@ namespace smart_ptr {
 
         template<
                 typename _Type,
-                typename = enable_if_t<
-                        is_convertible_v<_Type *, Type *>
+                typename = std::enable_if_t<
+                        std::is_convertible_v<_Type *, Type *>
                 >
         >
         linked_ptr<Type>& operator=(linked_ptr<_Type> &l_ptr) noexcept {
@@ -156,8 +148,8 @@ namespace smart_ptr {
 
         template<
                 typename _Type,
-                typename = enable_if_t<
-                        is_convertible_v<_Type *, Type *>
+                typename = std::enable_if_t<
+                        std::is_convertible_v<_Type *, Type *>
                 >
         >
         linked_ptr<Type>& operator=(const linked_ptr<_Type> &l_ptr) noexcept {
